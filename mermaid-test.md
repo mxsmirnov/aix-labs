@@ -1,4 +1,4 @@
-:::mermaid
+```mermaid
 treemap-beta
 "Annual Budget"
   "Operations"
@@ -11,4 +11,4 @@ treemap-beta
   "R&D"
     "Research": 300000
     "Development": 250000
-:::
+```
