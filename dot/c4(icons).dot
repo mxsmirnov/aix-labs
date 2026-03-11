@@ -1,0 +1,137 @@
+digraph C4SimpleDiagram {
+    graph [
+        rankdir = LR
+        fontname = "Arial"
+        fontsize = 12
+        label = "C4 Component Diagram"
+        splines = ortho
+        nodesep = 0.6
+        ranksep = 1.2
+    ]
+    
+    edge [
+        fontname = "Arial"
+        fontsize = 9
+    ]
+    
+    // АКТОРЫ (слева)
+    {
+        rank = min
+        customer [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#E5E5E5">
+            <TR><TD ALIGN="left"><FONT POINT-SIZE="24">👤</FONT>&nbsp;<I>«actor»</I></TD></TR>
+            <TR><TD><B>покупатель</B></TD></TR>
+        </TABLE>>, shape=plaintext]
+        
+        admin [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#E5E5E5">
+            <TR><TD ALIGN="left"><FONT POINT-SIZE="24">👮</FONT> <I>«actor»</I></TD></TR>
+            <TR><TD><B>администратор</B></TD></TR>
+        </TABLE>>, shape=plaintext]
+    }
+    
+    // ФРОНТЕНД
+    web [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#ADD8E6">
+        <TR><TD ALIGN="center"><I>"React web app"</I></TD></TR>
+        <TR><TD><FONT POINT-SIZE="20">🌐</FONT></TD></TR>
+        <TR><TD><B>Web Frontend</B></TD></TR>
+        </TABLE>>, shape=plaintext]
+    
+    mobile [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#90EE90">
+        <TR><TD><I>«mobile app»</I></TD></TR>
+        <TR><TD><FONT POINT-SIZE="20">📱</FONT></TD></TR>
+        <TR><TD><B>Mobile App</B></TD></TR>
+    </TABLE>>, shape=plaintext]
+    
+    // API GATEWAY
+    gateway [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#FFB6C1">
+        <TR><TD><FONT POINT-SIZE="20">🚪</FONT></TD></TR>
+        <TR><TD><I>«api gateway»</I></TD></TR>
+        <TR><TD><B>API Gateway</B></TD></TR>
+        <TR><TD>Kong</TD></TR>
+    </TABLE>>, shape=plaintext]
+    
+    // КОНТЕЙНЕР МИКРОСЕРВИСОВ (с Redis внутри)
+    subgraph cluster_services {
+        label = "Микросервисы (Java)"
+        color = "#333333"
+        style = filled
+        fillcolor = "#FFE4E1"
+        
+        // Микросервисы на одном уровне
+        { rank=same auth orders }
+        
+        auth [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#FFB6C1">
+            <TR><TD><FONT POINT-SIZE="24">🔐</FONT></TD></TR>
+            <TR><TD><I>«Java/Spring»</I></TD></TR>
+            <TR><TD><B>Auth</B></TD></TR>
+        </TABLE>>, shape=plaintext]
+        
+        orders [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#FFB6C1">
+            <TR><TD><FONT POINT-SIZE="24">📋</FONT></TD></TR>
+            <TR><TD><I>«Java/Spring»</I></TD></TR>
+            <TR><TD><B>Orders</B></TD></TR>
+        </TABLE>>, shape=plaintext]
+        
+        payments [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#FFB6C1">
+            <TR><TD><FONT POINT-SIZE="24">💳</FONT></TD></TR>
+            <TR><TD><I>«Java/Spring»</I></TD></TR>
+            <TR><TD><B>Payments</B></TD></TR>
+        </TABLE>>, shape=plaintext]
+        
+        // Redis внутри того же контейнера
+        redis [label=<<FONT POINT-SIZE="24">⚡</FONT>&nbsp;<I>«Redis»</I><BR/><B>Cache</B>>, shape=cylinder]
+    }
+    
+    // КОНТЕЙНЕР БАЗ ДАННЫХ (PostgreSQL)
+    subgraph cluster_databases {
+        label = "Базы данных (PostgreSQL)"
+        color = "#333333"
+        style = filled
+        fillcolor = "#F0E6FA"
+        
+        { rank=same user_db order_db }
+        
+        user_db [label=<<I>«PostgreSQL»</I><BR/><B>UserDB</B>>, shape=cylinder]
+        order_db [label=<<I>«PostgreSQL»</I><BR/><B>OrderDB</B>>, shape=cylinder]
+    }
+    
+    // ВНЕШНЯЯ СИСТЕМА
+    payment_gateway [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="2" CELLPADDING="4" BGCOLOR="#D3D3D3">
+        <TR><TD><FONT POINT-SIZE="20">🏦</FONT></TD></TR>
+        <TR><TD><I>«external»</I></TD></TR>
+        <TR><TD><B>Stripe</B></TD></TR>
+    </TABLE>>, shape=plaintext]
+    
+    // СВЯЗИ АКТОРОВ
+    edge [color = "black", style = "solid"]
+    customer -> web [label = "use"]
+    customer -> mobile [label = "use"]
+    admin -> web [label = "use"]
+    
+    // СВЯЗИ ФРОНТЕНД -> GATEWAY
+    edge [color = "blue", style = "solid"]
+    web -> gateway [label = "HTTPS"]
+    mobile -> gateway [label = "HTTPS"]
+    
+    // GATEWAY -> МИКРОСЕРВИСЫ
+    gateway -> auth [label = "gRPC"]
+    gateway -> orders [label = "gRPC"]
+    gateway -> payments [label = "gRPC"]
+    
+    // СВЯЗИ МЕЖДУ МИКРОСЕРВИСАМИ
+    edge [color = "blue", style = "dashed"]
+    orders -> payments [label = "process"]
+    orders -> auth [label = "check"]
+    auth -> redis [label = "сессии"]
+    orders -> redis [label = "кэш"]
+    
+    // СВЯЗИ С БАЗАМИ ДАННЫХ
+    edge [color = "blue", style = "solid"]
+    auth -> user_db [label = "JDBC"]
+    orders -> order_db [label = "JDBC"]
+    
+    // СВЯЗЬ С ВНЕШНЕЙ СИСТЕМОЙ
+    edge [color = "blue", style = "dashed"]
+    payments -> payment_gateway [label = "REST"]
+
+    redis -> user_db [style=invis, weight=100];  // невидимое, но сильное ребро
+}

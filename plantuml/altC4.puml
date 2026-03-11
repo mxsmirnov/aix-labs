@@ -1,0 +1,14 @@
+@startuml 
+
+rectangle  Comp1 as "
+<&wifi*2> <i>stereotype</i>           
+= Название
+----
+Описание компонента
+или контейнера 
+[[http://plantuml.com Подробное описание здесь]]
+"
+
+@enduml
+
+

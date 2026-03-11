@@ -1,0 +1,218 @@
+digraph C4ComponentDiagram {
+    graph [
+        rankdir = LR
+        fontname = "Arial"
+        fontsize = 12
+        labelloc = t
+        label = "C4 Component Diagram - Система электронной коммерции\nМодель контейнеров (Container view)"
+        splines = ortho
+        nodesep = 0.5
+        ranksep = 1.5
+    ]
+    
+    node [
+        fontname = "Arial"
+        fontsize = 10
+        shape = "rectangle"
+        style = "filled"
+        fillcolor = "lightblue"
+        labeljust = "c"
+    ]
+    
+    edge [
+        fontname = "Arial"
+        fontsize = 9
+    ]
+    
+    // Акторы слева
+    {
+        rank = min
+        customer [label = "Покупатель\n(Актор)", shape = "actor", fillcolor = "#E5E5E5", fontsize = 11, group = "actors"]
+        admin [label = "Администратор\n(Актор)", shape = "actor", fillcolor = "#E5E5E5", fontsize = 11, group = "actors"]
+        support [label = "Сотрудник поддержки\n(Актор)", shape = "actor", fillcolor = "#E5E5E5", fontsize = 11, group = "actors"]
+    }
+    
+    // Базы данных справа
+    {
+        rank = max
+        user_db [label = "«database»\nUser DB\nPostgreSQL", fillcolor = "#DDA0DD", shape = "cylinder", fontname = "Arial", group = "databases"]
+        product_db [label = "«database»\nProduct DB\nPostgreSQL", fillcolor = "#DDA0DD", shape = "cylinder", fontname = "Arial", group = "databases"]
+        order_db [label = "«database»\nOrder DB\nPostgreSQL", fillcolor = "#DDA0DD", shape = "cylinder", fontname = "Arial", group = "databases"]
+        redis_cache [label = "«cache»\nRedis Cache\nSession & data", fillcolor = "#FFA07A", shape = "cylinder", fontname = "Arial", group = "databases"]
+        elastic_cluster [label = "«search engine»\nElasticsearch\nSearch index", fillcolor = "#DDA0DD", shape = "cylinder", fontname = "Arial", group = "databases"]
+        message_queue [label = "«message broker»\nMessage Queue\nRabbitMQ", fillcolor = "#F0E68C", shape = "cylinder", fontname = "Arial", group = "databases"]
+        analytics_db [label = "«analytical database»\nAnalytics DB\nClickHouse", fillcolor = "#DDA0DD", shape = "cylinder", fontname = "Arial", group = "databases"]
+        mongo_db [label = "«document database»\nReviews DB\nMongoDB", fillcolor = "#DDA0DD", shape = "cylinder", fontname = "Arial", group = "databases"]
+    }
+    
+    // Система 1: Frontend приложения
+    subgraph cluster_frontend {
+        label = "Система: Frontend приложения"
+        fontsize = 11
+        fontname = "Arial Bold"
+        style = "filled"
+        fillcolor = "#F5F5F5"
+        color = "#333333"
+        
+        web_app [label = "«web application»\nWeb Frontend\nReact SPA", fillcolor = "#ADD8E6", fontname = "Arial"]
+        mobile_app [label = "«mobile application»\nMobile App\nReact Native", fillcolor = "#90EE90", fontname = "Arial"]
+        admin_panel [label = "«web application»\nAdmin Panel\nVue.js", fillcolor = "#ADD8E6", fontname = "Arial"]
+    }
+    
+    // Система 2: API Gateway и маршрутизация
+    subgraph cluster_gateway {
+        label = "Система: API Gateway"
+        fontsize = 11
+        fontname = "Arial Bold"
+        style = "filled"
+        fillcolor = "#F5F5F5"
+        color = "#333333"
+        
+        api_gateway [label = "«api gateway»\nAPI Gateway\nKong/Nginx", fillcolor = "#FFB6C1", fontname = "Arial"]
+        auth_service [label = "«authentication service»\nAuth Service\nJWT/OAuth", fillcolor = "#FFB6C1", fontname = "Arial"]
+        rate_limiter [label = "«rate limiting service»\nRate Limiter\nRedis based", fillcolor = "#FFA07A", fontname = "Arial"]
+    }
+    
+    // Система 3: Core Business Services
+    subgraph cluster_core {
+        label = "Система: Core Business Services"
+        fontsize = 11
+        fontname = "Arial Bold"
+        style = "filled"
+        fillcolor = "#F5F5F5"
+        color = "#333333"
+        
+        user_service [label = "«microservice»\nUser Service\nUser management", fillcolor = "#FFB6C1", fontname = "Arial"]
+        product_service [label = "«microservice»\nProduct Service\nProduct catalog", fillcolor = "#FFB6C1", fontname = "Arial"]
+        order_service [label = "«microservice»\nOrder Service\nOrder processing", fillcolor = "#FFB6C1", fontname = "Arial"]
+        cart_service [label = "«microservice»\nCart Service\nShopping cart", fillcolor = "#FFB6C1", fontname = "Arial"]
+        payment_service [label = "«microservice»\nPayment Service\nPayment processing", fillcolor = "#FFB6C1", fontname = "Arial"]
+        inventory_service [label = "«microservice»\nInventory Service\nStock management", fillcolor = "#FFB6C1", fontname = "Arial"]
+        shipping_service [label = "«microservice»\nShipping Service\nDelivery management", fillcolor = "#FFB6C1", fontname = "Arial"]
+    }
+    
+    // Система 4: Supporting Services
+    subgraph cluster_supporting {
+        label = "Система: Supporting Services"
+        fontsize = 11
+        fontname = "Arial Bold"
+        style = "filled"
+        fillcolor = "#F5F5F5"
+        color = "#333333"
+        
+        notification_service [label = "«notification service»\nNotification Service\nEmail/SMS/Push", fillcolor = "#FFB6C1", fontname = "Arial"]
+        search_service [label = "«search service»\nSearch Service\nElasticsearch", fillcolor = "#FFB6C1", fontname = "Arial"]
+        review_service [label = "«microservice»\nReview Service\nRatings & reviews", fillcolor = "#FFB6C1", fontname = "Arial"]
+        recommendation_service [label = "«recommendation engine»\nRecommendation Service\nML based", fillcolor = "#FFB6C1", fontname = "Arial"]
+        analytics_service [label = "«analytics service»\nAnalytics Service\nUser tracking", fillcolor = "#FFB6C1", fontname = "Arial"]
+        coupon_service [label = "«microservice»\nCoupon Service\nDiscounts & promo", fillcolor = "#FFB6C1", fontname = "Arial"]
+        wishlist_service [label = "«microservice»\nWishlist Service\nUser wishlists", fillcolor = "#FFB6C1", fontname = "Arial"]
+    }
+    
+    // Система 5: External Systems
+    subgraph cluster_external {
+        label = "Система: External Systems"
+        fontsize = 11
+        fontname = "Arial Bold"
+        style = "filled"
+        fillcolor = "#F5F5F5"
+        color = "#333333"
+        
+        payment_gateway [label = "«external payment system»\nPayment Gateway\nStripe/PayPal", fillcolor = "#D3D3D3", shape = "box", fontname = "Arial"]
+        sms_gateway [label = "«external sms service»\nSMS Gateway\nTwilio", fillcolor = "#D3D3D3", shape = "box", fontname = "Arial"]
+        email_service [label = "«external email service»\nEmail Service\nSendGrid", fillcolor = "#D3D3D3", shape = "box", fontname = "Arial"]
+        shipping_provider [label = "«external shipping system»\nShipping Provider\nUPS/FedEx", fillcolor = "#D3D3D3", shape = "box", fontname = "Arial"]
+    }
+    
+    // Связи акторов с Frontend
+    edge [color = "black", style = "solid", arrowhead = "normal"]
+    customer -> web_app [label = "использует"]
+    customer -> mobile_app [label = "использует"]
+    admin -> admin_panel [label = "использует"]
+    support -> admin_panel [label = "использует"]
+    
+    // Связи между компонентами
+    edge [color = "blue", style = "solid"]
+    
+    // Frontend to Gateway
+    web_app -> api_gateway [label = "HTTPS/REST"]
+    mobile_app -> api_gateway [label = "HTTPS/REST"]
+    admin_panel -> api_gateway [label = "HTTPS/REST"]
+    
+    // Gateway to Services
+    api_gateway -> auth_service [label = "gRPC"]
+    api_gateway -> user_service [label = "gRPC"]
+    api_gateway -> product_service [label = "gRPC"]
+    api_gateway -> order_service [label = "gRPC"]
+    api_gateway -> cart_service [label = "gRPC"]
+    api_gateway -> payment_service [label = "gRPC"]
+    api_gateway -> search_service [label = "HTTP/REST"]
+    api_gateway -> review_service [label = "gRPC"]
+    api_gateway -> wishlist_service [label = "gRPC"]
+    api_gateway -> coupon_service [label = "gRPC"]
+    api_gateway -> notification_service [label = "gRPC"]
+    api_gateway -> analytics_service [label = "gRPC"]
+    
+    // Service to Service communication
+    order_service -> inventory_service [label = "gRPC", style = "dashed"]
+    order_service -> payment_service [label = "gRPC", style = "dashed"]
+    order_service -> shipping_service [label = "gRPC", style = "dashed"]
+    payment_service -> coupon_service [label = "gRPC", style = "dashed"]
+    order_service -> notification_service [label = "events", style = "dotted"]
+    
+    // Service to Database connections (направлены справа)
+    user_service -> user_db [label = "JDBC", dir = forward]
+    product_service -> product_db [label = "JDBC", dir = forward]
+    order_service -> order_db [label = "JDBC", dir = forward]
+    payment_service -> order_db [label = "JDBC", dir = forward]
+    inventory_service -> product_db [label = "JDBC", dir = forward]
+    shipping_service -> order_db [label = "JDBC", dir = forward]
+    review_service -> mongo_db [label = "MongoDB Protocol", dir = forward]
+    analytics_service -> analytics_db [label = "JDBC", dir = forward]
+    
+    // Cache connections
+    auth_service -> redis_cache [label = "Redis Protocol", dir = forward]
+    cart_service -> redis_cache [label = "Redis Protocol", dir = forward]
+    rate_limiter -> redis_cache [label = "Redis Protocol", dir = forward]
+    user_service -> redis_cache [label = "Redis Protocol", style = "dashed", dir = forward]
+    wishlist_service -> redis_cache [label = "Redis Protocol", style = "dashed", dir = forward]
+    
+    // Search
+    search_service -> elastic_cluster [label = "REST", dir = forward]
+    product_service -> elastic_cluster [label = "REST", style = "dotted", dir = forward]
+    
+    // Message Queue connections
+    order_service -> message_queue [label = "AMQP", dir = forward]
+    payment_service -> message_queue [label = "AMQP", dir = forward]
+    message_queue -> notification_service [label = "AMQP", dir = forward]
+    message_queue -> analytics_service [label = "AMQP", dir = forward]
+    message_queue -> inventory_service [label = "AMQP", dir = forward]
+    message_queue -> shipping_service [label = "AMQP", dir = forward]
+    
+    // External integrations
+    payment_service -> payment_gateway [label = "HTTPS"]
+    notification_service -> sms_gateway [label = "HTTPS"]
+    notification_service -> email_service [label = "HTTPS"]
+    shipping_service -> shipping_provider [label = "HTTPS"]
+    
+    // Analytics
+    analytics_service -> product_service [label = "gRPC", style = "dashed", dir = both]
+    web_app -> analytics_service [label = "Events", style = "dashed"]
+    mobile_app -> analytics_service [label = "Events", style = "dashed"]
+    
+    // Recommendation
+    recommendation_service -> product_service [label = "gRPC", style = "dashed"]
+    recommendation_service -> analytics_db [label = "JDBC", style = "dashed", dir = forward]
+    recommendation_service -> order_service [label = "gRPC", style = "dotted"]
+    
+    // Additional connections
+    auth_service -> user_service [label = "gRPC", style = "dashed"]
+    wishlist_service -> product_service [label = "gRPC", style = "dotted"]
+    coupon_service -> order_service [label = "gRPC", style = "dotted"]
+    
+    // Связи с внешними системами
+    payment_gateway -> payment_service [label = "webhook", style = "dashed", dir = back]
+    sms_gateway -> notification_service [label = "callback", style = "dashed", dir = back]
+    email_service -> notification_service [label = "callback", style = "dashed", dir = back]
+    shipping_provider -> shipping_service [label = "tracking", style = "dashed", dir = back]
+}

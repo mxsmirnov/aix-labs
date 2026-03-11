@@ -1,0 +1,7 @@
+digraph G {
+  rankdir=LR
+  node [shape=box, color=lightgray]
+  node1 [style=filled, style="rounded"] 
+  node2 [style=filled, fillcolor=LightSlateGray] 
+  node0 -> node1 -> node2
+}

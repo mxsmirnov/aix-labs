@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant U as User
+    participant A as Agent
+    participant T as Tool
+    participant L as LLM
+
+    U->>A: 1. Какая погода в Москве?
+    A->>L: 2. Системный промпт + запрос + описание tool
+    L-->>A: 3. Вызови функциию  get_weather('Москва')
+    A->>T: 4. Вызов инструмента (API погоды)
+    T-->>A: 5. Результат: "{'temp': '5°C', 'condition': 'ясно'}"
+    A->>L: 6. Отправляем результата инструмента обратно в LLM
+    L-->>A: 7. Финальный ответ: "В Москве сейчас +5°C и ясно."
+    A->>U: 8. Отвечаем пользователю
