@@ -1,0 +1,99 @@
+@startuml
+!NEW_C4_STYLE=1
+
+!include <C4/C4_Container>
+!include <C4/C4_Context>
+!include <C4/C4_Deployment>
+' Для иконок (опционально, но красиво)
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!include DEVICONS/python.puml
+!include DEVICONS/postgresql.puml
+!include DEVICONS/nginx.puml
+!include DEVICONS/docker.puml
+!include DEVICONS/redis.puml
+
+' Настройка внешнего вида
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+skinparam linetype spline
+skinparam rectangle {
+    BackgroundColor #F8F8F8
+    BorderColor #444444
+    FontColor #000000
+}
+
+' === Персона (пользователь) ===
+Person(engineer, "Инженер/Пользователь", "Задаёт вопросы об инфраструктуре, багах, документации")
+
+' === Граница системы aiExpert ===
+System_Boundary(aiExpert, "aiExpert - Agentic RAG System") {
+
+    ' === Внешний слой - Интерфейсы ===
+    Container(webui, "Веб-интерфейс", "React/TypeScript", "Чат-интерфейс для общения с агентом", $sprite="nginx")
+    Container(api, "API Gateway", "FastAPI (Python)", "Точка входа для всех запросов, аутентификация, маршрутизация", $sprite="python")
+
+    ' === Ядро системы - Оркестрация ===
+    Container(agent, "Agent Orchestrator", "LangGraph (Python)", "Координирует цепочки размышлений, выбирает инструменты, управляет состоянием диалога", $sprite="python")
+    Container(graph, "LangGraph Runtime", "StateGraph", "Управляет графом состояний, циклами, переходом между узлами")
+
+    ' === RAG компоненты ===
+    Container(retriever, "Retriever", "LangChain Retriever", "Извлекает релевантные документы из векторного хранилища", $sprite="python")
+    Container(embedding, "Embedding Service", "Sentence-Transformers", "Генерирует эмбеддинги для запросов и документов (локально или через API)")
+    
+    ' === Память и кэш ===
+    Container(memory, "Conversation Memory", "Redis", "Хранит историю диалогов для поддержания контекста", $sprite="redis")
+    Container(cache, "Response Cache", "Redis", "Кэширует частые запросы для ускорения ответа", $sprite="redis")
+    
+    ' === База данных ===
+    ContainerDb(vector_db, "Векторное хранилище", "PostgreSQL + pgvector", "Хранит чанки документов и их эмбеддинги, выполняет векторный поиск", $sprite="postgresql")
+    
+' === Границы для группировки MCP серверов ===
+Boundary(mcp_servers, "MCP Servers (Инструменты агента)") {
+    ' === Инструменты агента (MCP серверы) ===
+    Container(mcp_cmdb, "MCP Server CMDB", "Python MCP Server", "Инструмент для получения данных из CMDB (конфигурации, серверы, зависимости)", $sprite="python")
+    Container(mcp_confluence, "MCP Server Confluence", "Python MCP Server", "Инструмент для поиска в Confluence (документация, баги, требования)", $sprite="python")
+    }    
+}
+' === Внешние системы (к которым обращаются MCP серверы) - вынесены за границу aiExpert ===
+
+' === Внешние системы ===
+System_Ext(cmdb, "CMDB", "Система управления конфигурациями")
+System_Ext(confluence, "Confluence", "База знаний")
+
+' === Связи ===
+' Пользователь -> Система
+Rel(engineer, webui, "Открывает чат, задаёт вопрос", "HTTPS/WebSocket")
+
+' Внутренние связи WebUI -> API
+Rel_R(webui, api, "Отправляет запросы", "JSON/HTTPS")
+
+' API -> Ядро
+Rel(api, agent, "Передаёт запрос пользователя", "gRPC/HTTP")
+Rel_L(agent, graph, "Управляет состоянием графа", "внутренний вызов")
+
+' RAG процесс
+Rel(agent, retriever, "Запрашивает релевантные документы", "вызов функции")
+Rel(retriever, embedding, "Запрашивает эмбеддинг запроса", "gRPC/HTTP")
+Rel(embedding, vector_db, "Выполняет векторный поиск", "SQL + pgvector")
+Rel(vector_db, retriever, "Возвращает релевантные чанки", "данные")
+Rel(retriever, agent, "Возвращает контекст", "данные")
+
+' Память и кэш
+Rel(agent, memory, "Читает/пишет историю диалога", "Redis protocol")
+Rel(agent, cache, "Проверяет/сохраняет кэш", "Redis protocol")
+Lay_D(memory, cache)
+
+' Агент использует инструменты (MCP серверы)
+Rel_R(agent, mcp_cmdb, "Вызывает инструмент: get_server_info(), get_dependencies()", "MCP protocol/STDIO")
+Rel_R(agent, mcp_confluence, "Вызывает инструмент: search_docs(), get_bug_workaround()", "MCP protocol/STDIO")
+Lay_D(mcp_cmdb, mcp_confluence)
+
+' MCP серверы обращаются к внешним системам
+Rel_R(mcp_cmdb, cmdb, "Запрашивает данные", "REST API/SQL")
+Rel_R(mcp_confluence, confluence, "Ищет документы", "REST API")
+
+
+' === Легенда ===
+SHOW_LEGEND()
+@enduml
