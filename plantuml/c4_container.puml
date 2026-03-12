@@ -1,12 +1,19 @@
 @startuml "messagebus"
+
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 ' uncomment the following line and comment the first to use locally
 ' !include C4_Container.puml
 ' Больше примеров на https://github.com/plantuml-stdlib/C4-PlantUML/tree/master/samples
 
+skinparam linetype ortho    /' ортогональные линии, работает только в командной строке '/
+
 ' Меняем отрисовку микросервисов и баз данных. Используем указав параметр $tags
 AddElementTag("microService", $shape=EightSidedShape(), $bgColor=#D6DCE5, $fontColor="black", $legendText="micro service\neight sided")
 AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor=#0070C0, $fontColor="white")
+
+' Определяем тег для асинхронных/фоновых вызовов (пунктирная оранжевая линия)
+AddRelTag("async", $lineColor="orange", $lineStyle=DashedLine())
+
 
 ' Отрисовка actors в любом случае так себе, поэтому отключаем
 ' SHOW_PERSON_OUTLINE()
@@ -16,7 +23,7 @@ Person(customer, Customer, "A customer")
 System_Boundary(c1, "Customer Information") {
     Container(app, "Customer Application", "Javascript, Angular", "Allows customers to manage their profile")
     Container(customer_service, "Customer Service", "Java, Spring Boot", "The point of access for customer information", $tags = "microService")
-    Container(message_bus, "Message Bus", "RabbitMQ", "Transport for business events")
+    ContainerQueue(message_bus, "Message Bus", "RabbitMQ", "Transport for business events")
     Container(reporting_service, "Reporting Service", "Ruby", "Creates normalised data for reporting purposes", $tags = "microService")
     Container(audit_service, "Audit Service", "C#/.NET", "Provides organisation-wide auditing facilities", $tags = "microService")
     ContainerDb(customer_db, "Customer Database", "Oracle 12c", "Stores customer information", $tags = "storage")
