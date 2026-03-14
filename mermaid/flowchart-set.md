@@ -1,12 +1,15 @@
 # Flochart diagram
 * markdown работает
-## Simple Left-Right Graph
-* формы (начертания контуров) элементов
+
+## Диаграмма 1. Simple Left-Right Graph
+* ориентация рисунка слева направо (по умолчанию свержу вниз)
+* формы (начертания контуров) элементов можно задать скобками
 * типы стрелок
 * метки стрелок
 * комментарии
 ```mermaid
-flowchart LR
+%% Два знака процента - это комментарии
+flowchart LR     
 %% Nodes
     1([Start])
     2[Look for <br>lost item]
@@ -16,9 +19,11 @@ flowchart LR
     1 --> 2 --> 3 -->|Yes| 4
     3 -.->|No| 2
 ```
-## Subgraph (version 1)
+## Диаграмма 2. Subgraph (version 1)
+Подграфы и связи между объектами из них
+_Расположение элементов предсказать непросто_
 ```mermaid
-flowchart  TB
+flowchart 
     c1-->a2
     subgraph one
         a1-->a2
@@ -30,7 +35,8 @@ flowchart  TB
         c1-->c2
     end
 ```
-## Subgraph (version 2)
+## Диаграмма 2. Subgraph (version 2)
+Поменяли местами подграфы two и three
 ```mermaid
 flowchart 
     c1-->a2
@@ -45,7 +51,30 @@ flowchart
     end
 ```
 
-## Subgraph (version 3)
+## Диаграмма 2. Subgraph (version 3)
+* Но лучше управлять расположением элементов, задавая направление стрелок
+* Заодно переопредлили стиль подграфов B1, B2
+```mermaid
+flowchart LR
+  subgraph TOP
+    direction TB
+    subgraph B1
+        direction RL
+        i1 -->f1
+    end
+    subgraph B2
+        direction BT
+        i2 -->f2
+    end
+  end
+  A --> TOP --> B
+  B1:::someclass --> B2:::someclass
+  classDef someclass fill:#E2F0D9, stroke:#385723
+```
+
+
+## Диаграмма 2. Subgraph (version 4)
+Направление (direction) для элементов за границами подграфов
 ```mermaid
 flowchart LR
     subgraph subgraph1
@@ -64,7 +93,7 @@ flowchart LR
     %% subgraph2 inherits the direction of the top-level graph (LR)
     outside ---> top2
 ```
-## Анимированные стрелки
+## Диаграмма 3. Анимированные стрелки
 Разной толщины и скорости анимации
 ```mermaid
 flowchart LR

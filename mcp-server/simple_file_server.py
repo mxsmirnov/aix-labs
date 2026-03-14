@@ -4,8 +4,8 @@ import sys
 
 def main():
     """Простейший MCP сервер для чтения одного файла через stdio"""
-    # Жестко заданный путь к файлу (измените на свой!)
-    FILE_PATH = r"C:\Users\mxsmi\AWS\aix-labs\mcp-server\notes.txt"
+    # Жестко заданный путь к файлу (Обязательно измените на свой!)
+    FILE_PATH = r"C:\Users\mxsmi\AIX\aix-labs\mcp-server\notes.txt"
     
     while True:
         # Читаем ввод (JSON-RPC сообщение)
