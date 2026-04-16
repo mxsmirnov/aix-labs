@@ -12,9 +12,9 @@
 !include FONTAWESOME/server.puml
 !include FONTAWESOME/envelope.puml
 
-' LAYOUT_TOP_DOWN()
+' LAYOUT_LEFT_RIGHT()
 ' LAYOUT_AS_SKETCH()
-LAYOUT_WITH_LEGEND()
+' LAYOUT_WITH_LEGEND()
 
 title Container diagram for Internet Banking System
 

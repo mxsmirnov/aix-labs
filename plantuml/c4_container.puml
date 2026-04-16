@@ -33,7 +33,7 @@ System_Boundary(c1, "Customer Information") {
 
 Rel_D(customer, app, "Uses", "HTTPS") /' стрелка вниз '/
 
-Rel_D(app, customer_service, "Updates customer information using", "async, JSON/HTTPS")
+Rel_D(app, customer_service, "Updates customer information using", "async, JSON/HTTPS",$tags=async)
 
 Rel_U(customer_service, app, "Sends events to", "WebSocket") /' стрелка вверх '/
 Rel_R(customer_service, message_bus, "Sends customer update events to")  /' стрелка вправо '/

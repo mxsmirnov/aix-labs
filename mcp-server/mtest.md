@@ -15,4 +15,4 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' | python simple_file_serve
 
 # 3. Чтение файла
 echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"read_notes","arguments":{}}}' | python simple_file_server.py
-```ы
+```
