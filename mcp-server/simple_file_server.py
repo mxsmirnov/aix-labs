@@ -4,7 +4,7 @@ import sys
 
 def main():
     """Простейший MCP сервер для чтения одного файла через stdio"""
-    FILE_PATH = r"C:\Users\mxsmi\AIX-03\aix-labs\mcp-server\notes.txt"
+    FILE_PATH = r"C:\Users\mxsmi\AIX-04\aix-labs\mcp-server\notes.txt"
 
     def send(obj):
         print(json.dumps(obj, ensure_ascii=False), flush=True)

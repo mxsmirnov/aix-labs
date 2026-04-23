@@ -141,7 +141,7 @@ echo "2. Подключить к Cursor" >> C:\Users\ваше_имя\Documents\n
     "my-file-reader": {
       "command": "python",
       "args": [
-        "C:\\mcp-server\\simple_file_server.py"
+        "C:\\users\\mxsmi\\AIX-04\\aix-labs\\mcp-server\\simple_file_server.py"
       ]
     }
   }
